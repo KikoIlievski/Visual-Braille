@@ -1,8 +1,3 @@
-// var images = document.getElementsByTagName('img');
-// for (var i = 0, l = images.length; i < l; i++) {
-//   images[i].src = 'http://placekitten.com/' + images[i].width + '/' + images[i].height;
-// }
-
 const map = {
     "0" :"⠴", 
     "1" : "⠂", 
@@ -100,15 +95,30 @@ const map = {
     "~" : "⠸⠘", 
     " " : " "
 }
-var paragraphs = document.getElementsByTagName('p');
-for (var i = 0; i < paragraphs.length;i++) {
-    paragraphs[i].innerText = "amogus";
-}
-console.log(paragraphs[0].innerText);
-// for (var i = 0; i < paragraphs.length; i++) {
-//     var currP = paragraphs[i].innerText;
-//     for (var j = 0; j < currP.length; j++) {
-//         var letter = paragraphs[i].innerText[j];
-//         letter = map[letter];
-//     }
-// }
+
+function replaceTextOnPage(from, to){
+    getAllTextNodes().forEach(function(node){
+      node.nodeValue = node.nodeValue.replace(new RegExp(quote(from), 'g'), to);
+    });
+  
+    function getAllTextNodes(){
+      var result = [];
+  
+      (function scanSubTree(node){
+        if(node.childNodes.length) 
+          for(var i = 0; i < node.childNodes.length; i++) 
+            scanSubTree(node.childNodes[i]);
+        else if(node.nodeType == Node.TEXT_NODE) 
+          result.push(node);
+      })(document);
+  
+      return result;
+    }
+  
+    function quote(str){
+      return (str+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+    }
+  }
+
+for (key in map){
+    replaceTextOnPage(key, map[key])}
