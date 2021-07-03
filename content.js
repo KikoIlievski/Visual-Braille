@@ -1,3 +1,7 @@
+String.prototype.replaceAt = function(index, replacement) {
+    return this.substr(0, index) + replacement + this.substr(index + replacement.length);
+}
+
 const map = {
     "0" :"⠴", 
     "1" : "⠂", 
@@ -96,29 +100,29 @@ const map = {
     " " : " "
 }
 
-function replaceTextOnPage(from, to){
-    getAllTextNodes().forEach(function(node){
-      node.nodeValue = node.nodeValue.replace(new RegExp(quote(from), 'g'), to);
-    });
-  
-    function getAllTextNodes(){
-      var result = [];
-  
-      (function scanSubTree(node){
-        if(node.childNodes.length) 
-          for(var i = 0; i < node.childNodes.length; i++) 
-            scanSubTree(node.childNodes[i]);
-        else if(node.nodeType == Node.TEXT_NODE) 
-          result.push(node);
-      })(document);
-  
-      return result;
-    }
-  
-    function quote(str){
-      return (str+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
-    }
-  }
+var elements = document.getElementsByTagName('*');
 
-for (key in map){
-    replaceTextOnPage(key, map[key])}
+for (var i = 0; i < elements.length; i++) {
+    var element = elements[i];
+
+    for (var j = 0; j < element.childNodes.length; j++) {
+        var node = element.childNodes[j];
+
+        if (node.nodeType === 3) {
+            if (["SCRIPT", "STYLE", "NOSCRIPT", "BODY", "TITLE", "BUTTON", "FORM"].includes(element.tagName)) {
+                continue;
+            } else if (element.tagName == "DIV") {
+                console.log(element.children);
+                break;
+            }
+            var text = node.nodeValue;
+            var replacedText = "";
+            for (var i = 0; i < text.length; i++) {
+                replacedText = replacedText.concat(map[text[i]]);
+            }            
+            if (replacedText !== text) {
+                element.replaceChild(document.createTextNode(replacedText), node);
+            }
+        }
+    }
+}
