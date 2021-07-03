@@ -96,29 +96,36 @@ const map = {
     " " : " "
 }
 
-function replaceTextOnPage(from, to){
-    getAllTextNodes().forEach(function(node){
-      node.nodeValue = node.nodeValue.replace(new RegExp(quote(from), 'g'), to);
-    });
-  
-    function getAllTextNodes(){
-      var result = [];
-  
-      (function scanSubTree(node){
-        if(node.childNodes.length) 
-          for(var i = 0; i < node.childNodes.length; i++) 
-            scanSubTree(node.childNodes[i]);
-        else if(node.nodeType == Node.TEXT_NODE) 
-          result.push(node);
-      })(document);
-  
-      return result;
+function translateBrail(){
+  const text = document.querySelectorAll("h1, h2, h3, h4, p, li, td, caption, span, a, div, th");
+  for (var i = 0; i < text.length; i++) {
+    if (text[i].nodeName == "DIV") {
+        if (text[i].innerText.length != 0 && text[i].children.length == 0) {
+            console.log(text[i]);
+            console.log(text[i].innerText);
+        } else {
+            continue;
+        }
     }
-  
-    function quote(str){
-      return (str+'').replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+    var textToTranslate = text[i].innerText;
+    var replacedText = "";
+    for (var j = 0; j < textToTranslate.length; j++) {
+        if (textToTranslate[j] in map) {
+            replacedText = replacedText.concat(map[textToTranslate[j]]);
+        } else {
+            replacedText = replacedText.concat(textToTranslate[j]);
+        }
     }
-  }
+    text[i].innerText = replacedText;
+}
+}
 
-for (key in map){
-    replaceTextOnPage(key, map[key])}
+chrome.runtime.onMessage.addListener(receiver);
+function receiver(request, sender, sendResponse) {
+  console.log(request.data);
+  if (request%2 === 0) {
+    translateBrail();
+  }else{
+    location.reload();
+  }
+}
