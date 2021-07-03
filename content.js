@@ -99,30 +99,39 @@ const map = {
     "~" : "⠸⠘", 
     " " : " "
 }
-
-var elements = document.getElementsByTagName('*');
-
-for (var i = 0; i < elements.length; i++) {
-    var element = elements[i];
-
-    for (var j = 0; j < element.childNodes.length; j++) {
-        var node = element.childNodes[j];
-
-        if (node.nodeType === 3) {
-            if (["SCRIPT", "STYLE", "NOSCRIPT", "BODY", "TITLE", "BUTTON", "FORM"].includes(element.tagName)) {
-                continue;
-            } else if (element.tagName == "DIV") {
-                console.log(element.children);
-                break;
-            }
-            var text = node.nodeValue;
-            var replacedText = "";
-            for (var i = 0; i < text.length; i++) {
-                replacedText = replacedText.concat(map[text[i]]);
-            }            
-            if (replacedText !== text) {
-                element.replaceChild(document.createTextNode(replacedText), node);
+function changeElementOfCurrLayer(parent = document) {
+    var elements = parent.getElementsByTagName('*');
+    for (var i = 0; i < elements.length; i++) {
+        var element = elements[i];
+    
+        for (var j = 0; j < element.childNodes.length; j++) {
+            var node = element.childNodes[j];
+    
+            if (node.nodeType === 3) {
+                if (["SCRIPT", "STYLE", "NOSCRIPT", "BODY", "TITLE", "BUTTON", "FORM"].includes(element.tagName)) {
+                    continue;
+                } else if (element.tagName == "DIV") {
+                    console.log(element.children);
+                    changeElementOfCurrLayer(element);
+                    break;
+                }
+                var text = node.nodeValue;
+                var replacedText = "";
+                for (var i = 0; i < text.length; i++) {
+                    replacedText = replacedText.concat(map[text[i]]);
+                }            
+                if (replacedText !== text) {
+                    element.replaceChild(document.createTextNode(replacedText), node);
+                }
             }
         }
     }
 }
+
+// function dfsForDiv(element) {
+//     for (var i = 0; i < element.children.length; i++) {
+//         if (element.childNodes[i]) {
+            
+//         }
+//     }
+// }
